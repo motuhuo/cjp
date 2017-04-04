@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+	<style>
+	/*	ul li{list-style:none;float: left;width: 30px;height: 30px;border: 1px solid #e2e2e2;}
+		ul li a{text-decoration: none; color: #333;line-height: 30px;display: block;text-align: center;}
+		ul li.active{color: #fff;background: #1b903f;}
+		ul li.goInput{width: 40px;}*/
+	</style>
+</head>
+<body>
+	
+</body>
+<script>
+// git Add
+// 分页开始
+// total:总页数，page:每页几个，callback:数据请求第几页数据
+function paginate(total,page,callback){
+	total = parseInt(total);
+	page = parseInt(page);
+
+	console.log('total:'+total);
+	console.log('page:'+page);
+	if(total<2){
+		return '';
+	}
+	var pid = 'page-'+Math.round(Math.random()*10000000);
+	var html = '<ul class="pagination" id="'+pid+'">';
+	if(page != 1){
+		html += '<li><a href="javascript:;" aria-label="Previous" class="page-prev"><span aria-hidden="true">&laquo;</span></a></li>';
+	}else{
+		html += '<li class="disabled"><a href="javascript:;" aria-label="Previous" class="page-prev"><span aria-hidden="true">&laquo;</span></a></li>';
+	}
+	if(page > 4){
+		html += '<li><a href="javascript:;" class="page-target">1</a></li>';
+		html += '<li class="disabled"><a href="javascript:;">...</a></li>';
+	}
+	var start = 1;
+	var end = 5;
+	start = page-3;
+	end = page+3;
+	if(start > total-6) start = total-6;
+	if(start < 1) start = 1;
+	if(end<7) end = 7;
+	if(end>total) end = total;
+	for (var i = start; i <= end; i++) {
+		html += '<li class="'+(i==page?'active':'')+'"><a href="javascript:;" class="page-target">'+i+'</a></li>';
+	};
+
+	if(total-page>3){
+		html += '<li class="disabled"><a href="javascript:;">...</a></li>';
+		html += '<li><a href="javascript:;" class="page-target">'+total+'</a></li>';
+	}
+	if(page != total){
+		html += '<li><a href="javascript:;" aria-label="Next" class="page-next"><span aria-hidden="true">&raquo;</span></a></li>';
+	}else{
+		html += '<li class="disabled"><a href="javascript:;" aria-label="Next" class="page-next"><span aria-hidden="true">&raquo;</span></a></li>';
+	}
+	if(total>10){
+		html += '<li class="goInput"><a style="padding:3px 3px"><input type="text" class="go-input" name="goto-input" style="width:40px"></a></li><li><a href="javascript:;" class="go-btn">GO</a></li>'
+	}
+	html += '</ul>';
+	if(typeof(callback) == 'function'){
+		$('body').on('click','#'+pid+' .page-next',function(){
+		  if (parseInt(page)+1 <= total) {
+        callback(parseInt(page)+1);
+      }
+		})
+		$('body').on('click','#'+pid+' .page-prev',function(){
+		  if (parseInt(page)-1 > 0) {
+        callback(parseInt(page)-1);
+      }
+		})
+		$('body').on('click','#'+pid+' .page-target',function(){
+			callback($(this).html());
+		});
+		$('body').on('click','#'+pid+' .go-btn',function(){
+			if(!$('#'+pid+' .go-input').val() || !parseInt($('#'+pid+' .go-input').val())) return;
+			if(parseInt($('#'+pid+' .go-input').val()) <= total && parseInt($('#'+pid+' .go-input').val())>0)
+			callback(parseInt($('#'+pid+' .go-input').val()));
+		})
+	}
+	return html;
+}
+</script>
+</html>
